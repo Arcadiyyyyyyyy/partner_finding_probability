@@ -8,8 +8,9 @@ packages = [{include = "app"}]
 
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "3.11.3"
 fastapi = {extras = ["all"], version = "^0.104.0"}
+pandas = "^2.1.1"
 
 
 [build-system]

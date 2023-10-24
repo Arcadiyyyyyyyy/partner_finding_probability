@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from .models import CalculationInputModel, CalculationOutputModel
+from app.lib.partner_finding_probability.calculations.us.models import CalculationInputModel, CalculationOutputModel
 
 
 router = APIRouter(prefix="/us")
