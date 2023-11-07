@@ -25,6 +25,9 @@ jobs:
           - name: Log into registry
             run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
 
+          - name: Build the package
+            run: ./mvnw package -Dnative
+
           - name: Build and push image
             run: |
                 IMAGE_ID=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
