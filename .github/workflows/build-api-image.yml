@@ -24,6 +24,9 @@ jobs:
             uses: actions/checkout@v4
           - name: Log into registry
             run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+          
+          - name: Give gha machine the permissions to build the project
+            run: chmod +x mvnw
 
           - name: Build the package
             run: ./mvnw package -Dnative
