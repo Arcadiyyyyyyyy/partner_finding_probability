@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: java-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api
+      namespace: java-api
+  template:
+    metadata:
+      labels:
+        app: api
+        namespace: java-api
+    spec:
+      containers:
+        - name: api
+          image: ghcr.io/arcadiyyyyyyyy/api_image:refs_heads_move_from_fastapi_to_quarkus
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              port: 8080
+              path: /q/health/live
+          readinessProbe:
+            httpGet:
+              path: /q/health/ready
+              port: 8080

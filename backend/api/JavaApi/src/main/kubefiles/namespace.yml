@@ -1,31 +1,7 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Namespace
 metadata:
-  name: JavaApi
-  namespace: io.quarkus.platform
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: JavaApi
-      namespace: io.quarkus.platform
-  template:
-    metadata:
-      labels:
-        app: JavaApi
-        namespace: io.quarkus.platform
-    spec:
-      containers:
-        - name: JavaApi
-          image: docker pull ghcr.io/arcadiyyyyyyyy/api_image:refs_heads_main
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 8080
-          livenessProbe:
-            httpGet:
-              port: 8080
-              path: /health/live
-          readinessProbe:
-            httpGet:
-              path: /health/ready
-              port: 8080
+  name: java-api
+  labels:
+    name: java-api
+    istio-injection: disabled
