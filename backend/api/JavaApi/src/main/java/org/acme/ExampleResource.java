@@ -11,6 +11,6 @@ public class ExampleResource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String hello() {
-        return "'Hola, get up' from " + System.getenv().getOrDefault("HOSTNAME", "unknown");
+        return "Duh " + System.getenv().getOrDefault("HOSTNAME", "unknown");
     }
 }

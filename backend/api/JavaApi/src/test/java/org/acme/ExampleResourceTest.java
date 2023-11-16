@@ -15,7 +15,7 @@ public class ExampleResourceTest {
           .when().get("/hello")
           .then()
              .statusCode(200)
-             .body(is("Hello from " + System.getenv().getOrDefault("HOSTNAME", "unknown")));
+             .body(is("Duh " + System.getenv().getOrDefault("HOSTNAME", "unknown")));
     }
 
 }
