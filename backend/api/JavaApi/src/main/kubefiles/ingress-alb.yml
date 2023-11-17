@@ -2,6 +2,9 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: api-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/least_conn: "true"
+    nginx.ingress.kubernetes.io/health-checks: "true"
   namespace: java-api
 spec:
   rules:
