@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: java-api
+  labels:
+    name: java-api
+    istio-injection: disabled
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+  namespace: java-api
+spec:
+  replicas: 10
+  strategy:
+    type: RollingUpdate
+#    rollingUpdate:
+#      maxSurge: 2
+#      maxUnavailable: 3
+  selector:
+    matchLabels:
+      app: api-pod
+      namespace: java-api
+  template:
+    metadata:
+      labels:
+        app: api-pod
+        namespace: java-api
+    spec:
+      containers:
+        - name: api-pod
+          image: ghcr.io/arcadiyyyyyyyy/api_image:refs_heads_move_from_fastapi_to_quarkus
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              port: 8080
+              path: /q/health/live
+          readinessProbe:
+            httpGet:
+              path: /q/health/ready
+              port: 8080
+            initialDelaySeconds: 1
+            periodSeconds: 5
+            timeoutSeconds: 4
+            successThreshold: 5
+            failureThreshold: 3
+
+          # R.I.P to 10 hours of my life. Without sleep pod stops faster than the ingress can process ips config,
+          # and that causes some requests to timeout. More here: https://github.com/kubernetes/kubernetes/issues/106476
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "sleep", "5" ]
+
+      terminationGracePeriodSeconds: 30
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-service
+  namespace: java-api
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: api-pod
+    namespace: java-api
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-ingress
+  namespace: java-api
+  annotations:
+    nginx.ingress.kubernetes.io/least_conn: "true"
+    nginx.ingress.kubernetes.io/health-checks: "true"
+    nginx.ingress.kubernetes.io/health-checks-mandatory: "true"
+    nginx.ingress.kubernetes.io/health-checks-mandatory-queue: "true"
+    nginx.ingress.kubernetes.io/slow-start: "7s"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "1"
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api-service
+                port:
+                  number: 8080
