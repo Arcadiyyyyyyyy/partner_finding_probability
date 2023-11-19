@@ -1,0 +1,9 @@
+# For local development only
+version: '3.8'
+services:
+  quarkus-api:
+    build:
+      context: ./
+      dockerfile: ./src/main/docker/Dockerfile.native
+    ports:
+      - "8080:8080"

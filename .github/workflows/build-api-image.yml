@@ -25,17 +25,6 @@ jobs:
           - name: Log into registry
             run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
 
-          - name: Set up JDK
-            uses: actions/setup-java@v1
-            with:
-              java-version: 17
-          
-          - name: Give gha machine the permissions to build the project
-            run: chmod +x mvnw
-
-          - name: Build Quarkus API
-            run: ./mvnw clean package -DskipTests=true -Dnative
-
           - name: Build and push image
             run: |
                 IMAGE_ID=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
